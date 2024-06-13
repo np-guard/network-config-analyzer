@@ -1,8 +1,8 @@
 # Network Config Analyzer (NCA)
-[![.github/workflows/test-push.yml](https://github.com/IBM/network-config-analyzer/actions/workflows/test-push.yml/badge.svg)](https://github.com/IBM/network-config-analyzer/actions/workflows/test-push.yml)
-[![.github/workflows/codeql-analysis.yml](https://github.com/IBM/network-config-analyzer/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/IBM/network-config-analyzer/actions/workflows/codeql-analysis.yml)
+[![.github/workflows/test-push.yml](https://github.com/np-guard/network-config-analyzer/actions/workflows/test-push.yml/badge.svg)](https://github.com/np-guard/network-config-analyzer/actions/workflows/test-push.yml)
+[![.github/workflows/codeql-analysis.yml](https://github.com/np-guard/network-config-analyzer/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/np-guard/network-config-analyzer/actions/workflows/codeql-analysis.yml)
 [![OpenSSF
-Scorecard](https://api.securityscorecards.dev/projects/github.com/IBM/network-config-analyzer/badge)](https://api.securityscorecards.dev/projects/github.com/IBM/network-config-analyzer)
+Scorecard](https://api.securityscorecards.dev/projects/github.com/np-guard/network-config-analyzer/badge)](https://api.securityscorecards.dev/projects/github.com/np-guard/network-config-analyzer)
 ---
 ## What is NCA?
 NCA is a tool for analyzing Network Policies and other connectivity-configuration resources.
@@ -176,7 +176,7 @@ If you would like to see the detailed LICENSE click [here](LICENSE).
 #
 ```
 
-[issues]: https://github.com/IBM/network-config-analyzer/issues/new/choose
-[Docker package]: https://github.com/IBM/network-config-analyzer/pkgs/container/nca
+[issues]: https://github.com/np-guard/network-config-analyzer/issues/new/choose
+[Docker package]: https://github.com/np-guard/network-config-analyzer/pkgs/container/nca
 [NCA GitHub Action]: https://github.com/np-guard/netpol-reports-gh-action
-[NCA Tekton Tasks]: https://github.com/IBM/network-config-analyzer/tree/master/tekton
+[NCA Tekton Tasks]: https://github.com/np-guard/network-config-analyzer/tree/master/tekton

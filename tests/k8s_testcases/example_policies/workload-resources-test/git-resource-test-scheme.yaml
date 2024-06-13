@@ -1,5 +1,5 @@
-namespaceList: https://github.com/IBM/network-config-analyzer/tree/master/tests/example_workload_resources/
-podList: https://github.com/IBM/network-config-analyzer/tree/master/tests/example_workload_resources/
+namespaceList: https://github.com/np-guard/network-config-analyzer/tree/master/tests/example_workload_resources/
+podList: https://github.com/np-guard/network-config-analyzer/tree/master/tests/example_workload_resources/
 
 networkConfigList:
   - name: workload_resources_captured

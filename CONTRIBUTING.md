@@ -2,21 +2,21 @@
 Our project welcomes external contributions. If you have an itch, please feel
 free to scratch it.
 
-To contribute code or documentation, please submit a [pull request](https://github.com/IBM/network-config-analyzer/pulls).
+To contribute code or documentation, please submit a [pull request](https://github.com/np-guard/network-config-analyzer/pulls).
 
 A good way to familiarize yourself with the codebase and contribution process is
-to look for and tackle low-hanging fruit in the [issue tracker](https://github.com/ibm/network-config-analyzer/issues).
+to look for and tackle low-hanging fruit in the [issue tracker](https://github.com/np-guard/network-config-analyzer/issues).
 
 ### Proposing new features
 
-If you would like to implement a new feature, please [raise an issue](https://github.com/ibm/network-config-analyzer/issues)
+If you would like to implement a new feature, please [raise an issue](https://github.com/np-guard/network-config-analyzer/issues)
 before sending a pull request so the feature can be discussed. This is to avoid
 you wasting your valuable time working on a feature that the project developers
 are not interested in accepting into the code base.
 
 ### Fixing bugs
 
-If you would like to fix a bug, please [raise an issue](https://github.com/ibm/network-config-analyzer/issues) before sending a
+If you would like to fix a bug, please [raise an issue](https://github.com/np-guard/network-config-analyzer/issues) before sending a
 pull request, so it can be tracked.
 
 ### Merge approval
@@ -69,7 +69,7 @@ Please feel free to email each one of the [maintainers](MAINTAINERS.md).
 To set up a development environment follow the instructions below.
 ### Linux
 ```shell
-git clone git@github.com:IBM/network-config-analyzer.git
+git clone git@github.com:np-guard/network-config-analyzer.git
 cd network-config-analyzer
 python3 -m venv venv
 source venv/bin/activate
@@ -78,7 +78,7 @@ pip3 install -r requirements.txt
 
 ### Windows (using [Git bash](https://git-scm.com/downloads))
 ```shell
-git clone git@github.com:IBM/network-config-analyzer.git
+git clone git@github.com:np-guard/network-config-analyzer.git
 cd network-config-analyzer
 python -m venv venv
 source venv/Scripts/activate

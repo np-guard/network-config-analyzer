@@ -27,7 +27,7 @@ An example connectivity report (in md format):
 ### Install the Task
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/IBM/network-config-analyzer/master/tekton/netpol-report-task.yaml
+kubectl apply -f https://raw.githubusercontent.com/np-guard/network-config-analyzer/master/tekton/netpol-report-task.yaml
 ```
 
 ### Parameters
@@ -82,7 +82,7 @@ An example diff output (in md format):
 ### Install the Task
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/IBM/network-config-analyzer/master/tekton/netpol-diff-task.yaml
+kubectl apply -f https://raw.githubusercontent.com/np-guard/network-config-analyzer/master/tekton/netpol-diff-task.yaml
 ```
 
 ### Parameters
