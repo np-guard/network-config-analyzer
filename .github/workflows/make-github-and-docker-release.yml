@@ -55,6 +55,7 @@ jobs:
       - name: Create and push a new git tag
         run: |
           git config user.name ${{ github.actor }}
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
           git tag -a v${{ env.version }} -m "Version ${{ env.version }}"
           git push origin v${{ env.version }}
 
