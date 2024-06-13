@@ -209,8 +209,8 @@
 - name: git_resources
   args: >
     --sanity k8s_testcases/example_policies/all-captured-tests/some-captured-tests-networkpolicy.yaml
-    --ns_list https://github.com/IBM/network-config-analyzer/tree/master/tests/example_workload_resources/
-    --pod_list https://github.com/IBM/network-config-analyzer/tree/master/tests/example_workload_resources/
+    --ns_list https://github.com/np-guard/network-config-analyzer/tree/master/tests/example_workload_resources/
+    --pod_list https://github.com/np-guard/network-config-analyzer/tree/master/tests/example_workload_resources/
   expected: 0
 
 - name: return_0

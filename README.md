@@ -176,7 +176,7 @@ If you would like to see the detailed LICENSE click [here](LICENSE).
 #
 ```
 
-[issues]: https://github.com/IBM/network-config-analyzer/issues/new/choose
-[Docker package]: https://github.com/IBM/network-config-analyzer/pkgs/container/nca
+[issues]: https://github.com/np-guard/network-config-analyzer/issues/new/choose
+[Docker package]: https://github.com/np-guard/network-config-analyzer/pkgs/container/nca
 [NCA GitHub Action]: https://github.com/np-guard/netpol-reports-gh-action
-[NCA Tekton Tasks]: https://github.com/IBM/network-config-analyzer/tree/master/tekton
+[NCA Tekton Tasks]: https://github.com/np-guard/network-config-analyzer/tree/master/tekton
