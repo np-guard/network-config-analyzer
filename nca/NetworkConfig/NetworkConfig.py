@@ -256,7 +256,7 @@ class NetworkConfig:
         return res
 
     def rebuild_by_base_config_resources(self, base_config):
-        result = base_config.clone_without_policies(self.name + "_rebuilt_by_" + base_config.name)
+        result = base_config.clone_without_policies(self.name)
         result.policies_finder = \
             self.policies_finder.rebuild_policies_by_peer_container(result.peer_container)
         result.policies_container = result.policies_finder.policies_container
