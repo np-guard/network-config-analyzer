@@ -199,7 +199,7 @@ class ResourcesHandler:
 
         # build and return the networkConfig
         return NetworkConfig(name=config_name, peer_container=peer_container,
-                             policies_container=resources_parser.policies_finder.policies_container,
+                             policies_finder=resources_parser.policies_finder,
                              debug=debug)
 
     def _set_config_peer_container(self, ns_list, pod_list, resource_list, config_name, save_flag, resources_parser):
