@@ -1005,7 +1005,8 @@ class TwoNetworkConfigsQuery(BaseNetworkQuery):
                 different_conns_list.append(PeersAndConnectivityProperties(src_peers_str_sorted, dst_peers_str_sorted,
                                                                            conns1, conns2))
             else:
-                different_conns_list.append(PeersAndConnectivityProperties([src_peers.rep()], [dst_peers.rep()], conns1, conns2))
+                different_conns_list.append(PeersAndConnectivityProperties([src_peers.rep()], [dst_peers.rep()],
+                                                                           conns1, conns2))
                 return
 
     @staticmethod
