@@ -16,7 +16,7 @@ class PeerContainer:
     It contains all the topology objects and used to get their info, e.g to filter the eps by labels and by namespaces
     """
 
-    def __init__(self, peer_set, namespaces, services_list, representative_peers):
+    def __init__(self, peer_set, namespaces, services_list, representative_peers, livesim_peers=PeerSet()):
         """
         create a PeerContainer object
         :param PeerSet peer_set: the parsed peers from input resources
@@ -27,6 +27,7 @@ class PeerContainer:
         """
         self.peer_set = peer_set
         self.representative_peers = representative_peers
+        self.livesim_peers = livesim_peers
         self.namespaces = namespaces  # mapping from namespace name to the actual K8sNamespace object
         self.services = {}  # mapping from service name to the actual K8sService object
         self._set_services_and_populate_target_pods(services_list)
@@ -74,6 +75,7 @@ class PeerContainer:
     def delete_all_peers(self):
         self.peer_set.clear()
         self.representative_peers.clear()
+        self.livesim_peers.clear()
         return True
 
     def get_num_peers(self):
@@ -323,6 +325,9 @@ class PeerContainer:
             if isinstance(peer, DNSEntry):
                 res.add(peer)
         return res
+
+    def get_livesim_peers(self):
+        return self.livesim_peers
 
     def get_all_global_peers(self):
         """
