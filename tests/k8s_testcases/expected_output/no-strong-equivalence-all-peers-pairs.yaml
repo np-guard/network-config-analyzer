@@ -9,14 +9,25 @@
   - description: Connections allowed in nt_notin/kube-system/allow-ingress-app-notin-predefined
       which are different in nt_notinwithexists/kube-system/allow-ingress-app-notin-predefined
     connections:
-    - src: '[''kube-system/calico-node-mgdlr'', ''kube-system/calico-node-ns8kw'',
-        ''kube-system/calico-node-ptdgj'', ''kube-system/heapster-7df8cb8c66-zxkk2'']'
-      dst: '[''kube-system/calico-node-mgdlr'', ''kube-system/calico-node-ns8kw'',
-        ''kube-system/calico-node-ptdgj'', ''kube-system/file-plugin-7bfb8b69bf-p86gk'',
-        ''kube-system/heapster-7df8cb8c66-zxkk2'', ''kube-system/keepalived-watcher-57ghx'',
-        ''kube-system/keepalived-watcher-gzdfm'', ''kube-system/keepalived-watcher-wczq8'',
-        ''kube-system/kube-fluentd-2qw2g'', ''kube-system/kube-fluentd-h6rjg'', ''kube-system/kube-fluentd-qmp4w'',
-        ''kube-system/storage-watcher-8494b4b8bb-f8csd'', ''kube-system/tiller-deploy-5c45c9966b-nqwz6'',
-        ''kube-system/vpn-858f6d9777-2bw5m'']'
+    - src:
+      - kube-system/calico-node-mgdlr
+      - kube-system/calico-node-ns8kw
+      - kube-system/calico-node-ptdgj
+      - kube-system/heapster-7df8cb8c66-zxkk2
+      dst:
+      - kube-system/calico-node-mgdlr
+      - kube-system/calico-node-ns8kw
+      - kube-system/calico-node-ptdgj
+      - kube-system/file-plugin-7bfb8b69bf-p86gk
+      - kube-system/heapster-7df8cb8c66-zxkk2
+      - kube-system/keepalived-watcher-57ghx
+      - kube-system/keepalived-watcher-gzdfm
+      - kube-system/keepalived-watcher-wczq8
+      - kube-system/kube-fluentd-2qw2g
+      - kube-system/kube-fluentd-h6rjg
+      - kube-system/kube-fluentd-qmp4w
+      - kube-system/storage-watcher-8494b4b8bb-f8csd
+      - kube-system/tiller-deploy-5c45c9966b-nqwz6
+      - kube-system/vpn-858f6d9777-2bw5m
       conns_config1: All connections
       conns_config2: No connections

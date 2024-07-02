@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache2.0
 #
 
+from dataclasses import dataclass, field
 from collections import deque
 import yaml
 from nca.Utils.CmdlineRunner import CmdlineRunner
@@ -15,8 +16,38 @@ from nca.Parsers.IngressPolicyYamlParser import IngressPolicyYamlParser
 from nca.Parsers.IstioGatewayYamlParser import IstioGatewayYamlParser
 from nca.Parsers.IstioVirtualServiceYamlParser import IstioVirtualServiceYamlParser
 from nca.Parsers.IstioGatewayPolicyGenerator import IstioGatewayPolicyGenerator
-from .NetworkConfig import PoliciesContainer
 from nca.Utils.ExplTracker import ExplTracker
+from .NetworkLayer import NetworkLayersContainer, NetworkLayerName
+
+
+@dataclass
+class PoliciesContainer:
+    """
+    A class for holding policies map and layers map containing sorted policies per layer
+    policies: map from tuples (policy name, policy type) to policy objects
+    layers: map from layer name to layer object
+    """
+    policies: dict = field(default_factory=dict)
+    layers: NetworkLayersContainer = field(default_factory=NetworkLayersContainer)
+
+    def append_policy(self, policy):
+        """
+        Add a policy to the container
+        :param NetworkPolicy policy: the policy to add
+        """
+        # validate input policy
+        if not policy:
+            return
+        policy_type = policy.policy_kind
+        if policy_type == NetworkPolicy.PolicyType.Unknown:
+            raise Exception('Unknown policy type')
+        if (policy.full_name(), policy_type) in self.policies:
+            raise Exception(f'A policy named {policy.full_name()} of type {policy_type} already exists')
+
+        # update policies map
+        self.policies[(policy.full_name(), policy_type)] = policy
+        # add policy to the corresponding layer's list (sorted) of policies
+        self.layers.add_policy(policy, NetworkLayerName.policy_type_to_layer(policy_type))
 
 
 class PoliciesFinder:
@@ -165,3 +196,10 @@ class PoliciesFinder:
 
     def has_empty_containers(self):
         return not self.policies_container.policies
+
+    def rebuild_policies_by_peer_container(self, peer_container):
+        result = PoliciesFinder()
+        result.peer_container = peer_container
+        result._parse_queue = self._parse_queue
+        result.parse_policies_in_parse_queue()
+        return result

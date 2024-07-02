@@ -163,6 +163,8 @@ class NetworkConfigQueryRunner:
         return query_to_exec.execute_and_compute_output_in_required_format()
 
     def _execute_pair_configs_query(self, query_type, config1, config2, cmd_line_flag=False):
+        if query_type == "ForbidsQuery" or query_type == "PermitsQuery":
+            config1 = config1.rebuild_by_base_config_resources(config2)
         query_to_exec = getattr(NetworkConfigQuery, query_type)(config1, config2, self.output_configuration)
         return query_to_exec.execute_and_compute_output_in_required_format(cmd_line_flag)
 
