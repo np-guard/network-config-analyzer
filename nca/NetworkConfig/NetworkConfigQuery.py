@@ -1000,12 +1000,12 @@ class TwoNetworkConfigsQuery(BaseNetworkQuery):
             conns1 = conns if props_based_on_config1 else no_props
             conns2 = no_props if props_based_on_config1 else conns
             if self.output_config.fullExplanation:
-                src_peers_str_sorted = str(sorted([str(peer) for peer in src_peers]))
-                dst_peers_str_sorted = str(sorted([str(peer) for peer in dst_peers]))
+                src_peers_str_sorted = sorted([str(peer) for peer in src_peers])
+                dst_peers_str_sorted = sorted([str(peer) for peer in dst_peers])
                 different_conns_list.append(PeersAndConnectivityProperties(src_peers_str_sorted, dst_peers_str_sorted,
                                                                            conns1, conns2))
             else:
-                different_conns_list.append(PeersAndConnectivityProperties(src_peers.rep(), dst_peers.rep(), conns1, conns2))
+                different_conns_list.append(PeersAndConnectivityProperties([src_peers.rep()], [dst_peers.rep()], conns1, conns2))
                 return
 
     @staticmethod

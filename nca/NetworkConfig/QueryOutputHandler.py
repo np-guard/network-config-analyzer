@@ -235,8 +235,8 @@ class PeersAndConnectivityProperties:
     """
     A class for holding info on connections between same peers pairs in two different configs
     """
-    src_peer: str = ''
-    dst_peer: str = ''
+    src_peer: list = field(default_factory=list)  # list[str]: pods names list
+    dst_peer: list = field(default_factory=list)  # list[str]: pods names list
     conns1: ConnectivityProperties = field(default_factory=ConnectivityProperties)  # connections in first config
     conns2: ConnectivityProperties = field(default_factory=ConnectivityProperties)  # connections in second config
 
