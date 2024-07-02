@@ -2,6 +2,5 @@
   configs:
   - config_b
   - config_a
-  executed: 0
-  description: The two configurations have different network topologies and thus are
-    not comparable.
+  numerical_result: 0
+  textual_result: config_a permits all connections specified in config_b
