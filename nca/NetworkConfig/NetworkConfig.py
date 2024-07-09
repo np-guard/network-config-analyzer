@@ -256,6 +256,12 @@ class NetworkConfig:
         return res
 
     def rebuild_by_base_config_resources(self, base_config):
+        """
+        Rebuild the current config policies, based on peer_set from the given config,
+        and return the result in a new config.
+        :param NetworkConfig base_config: The given config, whose peer_set should be used for the resulting config.
+        :return NetworkConfig: the resulting config
+        """
         result = base_config.clone_without_policies(self.name)
         result.policies_finder = \
             self.policies_finder.rebuild_policies_by_peer_container(result.peer_container)
