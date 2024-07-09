@@ -983,7 +983,8 @@ class TwoNetworkConfigsQuery(BaseNetworkQuery):
         res_conns2 = self.config2.filter_conns_by_peer_types(conns2) & conns_filter
         return res_conns1, res_conns2
 
-    def _append_different_conns_to_list(self, conn_diff_props, different_conns_list, props_based_on_config1=True):
+    def _append_different_conns_to_list(self, conn_diff_props, different_conns_list, props_based_on_config1=True,
+                                        remove_livesim_diff=False):
         """
         Adds difference between config1 and config2 connectivities into the list of differences
         :param ConnectivityProperties conn_diff_props: connectivity properties representing a difference
@@ -992,6 +993,13 @@ class TwoNetworkConfigsQuery(BaseNetworkQuery):
         :param bool props_based_on_config1: whether conn_diff_props represent connections present in config1 but not in config2
         (the value True) or connections present in config2 but not in config1 (the value False)
         """
+        if remove_livesim_diff:
+            livesim_peers = self.config1.peer_container.get_livesim_peers()
+            if livesim_peers:
+                peers_no_livesim = self.config1.peer_container.get_all_peers_group(True, True, True) - livesim_peers
+                conns_no_livesim = ConnectivityProperties.make_conn_props_from_dict({"src_peers": peers_no_livesim,
+                                                                                     "dst_peers": peers_no_livesim})
+                conn_diff_props &= conns_no_livesim
         no_props = ConnectivityProperties()
         for cube in conn_diff_props:
             conn_cube = conn_diff_props.get_connectivity_cube(cube)
@@ -1000,12 +1008,13 @@ class TwoNetworkConfigsQuery(BaseNetworkQuery):
             conns1 = conns if props_based_on_config1 else no_props
             conns2 = no_props if props_based_on_config1 else conns
             if self.output_config.fullExplanation:
-                src_peers_str_sorted = str(sorted([str(peer) for peer in src_peers]))
-                dst_peers_str_sorted = str(sorted([str(peer) for peer in dst_peers]))
+                src_peers_str_sorted = sorted([str(peer) for peer in src_peers])
+                dst_peers_str_sorted = sorted([str(peer) for peer in dst_peers])
                 different_conns_list.append(PeersAndConnectivityProperties(src_peers_str_sorted, dst_peers_str_sorted,
                                                                            conns1, conns2))
             else:
-                different_conns_list.append(PeersAndConnectivityProperties(src_peers.rep(), dst_peers.rep(), conns1, conns2))
+                different_conns_list.append(PeersAndConnectivityProperties([src_peers.rep()], [dst_peers.rep()],
+                                                                           conns1, conns2))
                 return
 
     @staticmethod
@@ -1065,8 +1074,8 @@ class EquivalenceQuery(TwoNetworkConfigsQuery):
         conns1_not_in_conns2 = all_conns1 - all_conns2
         conns2_not_in_conns1 = all_conns2 - all_conns1
         different_conns_list = []
-        self._append_different_conns_to_list(conns1_not_in_conns2, different_conns_list, True)
-        self._append_different_conns_to_list(conns2_not_in_conns1, different_conns_list, False)
+        self._append_different_conns_to_list(conns1_not_in_conns2, different_conns_list, props_based_on_config1=True)
+        self._append_different_conns_to_list(conns2_not_in_conns1, different_conns_list, props_based_on_config1=False)
         return self._query_answer_with_relevant_explanation(sorted(different_conns_list))
 
     def _query_answer_with_relevant_explanation(self, explanation_list):
@@ -1429,7 +1438,7 @@ class ContainmentQuery(TwoNetworkConfigsQuery):
     Checking whether the connections allowed by config1 are contained in those allowed by config2
     """
 
-    def exec(self, cmd_line_flag=False, only_captured=False):
+    def exec(self, cmd_line_flag=False, only_captured=False, remove_livesim_diff=False):
         config1_peers = self.config1.peer_container.get_all_peers_group(include_dns_entries=True)
         peers_in_config1_not_in_config2 = config1_peers - \
             self.config2.peer_container.get_all_peers_group(include_dns_entries=True)
@@ -1441,9 +1450,9 @@ class ContainmentQuery(TwoNetworkConfigsQuery):
             return QueryAnswer(False, f'{self.name1} is not contained in {self.name2} ',
                                output_explanation=[final_explanation], numerical_result=0 if not cmd_line_flag else 1)
 
-        return self.check_containment(cmd_line_flag, only_captured)
+        return self.check_containment(cmd_line_flag, only_captured, remove_livesim_diff)
 
-    def check_containment(self, cmd_line_flag=False, only_captured=False):
+    def check_containment(self, cmd_line_flag=False, only_captured=False, remove_livesim_diff=False):
         if only_captured:
             res_conns_filter1 = PolicyConnectionsFilter.only_allowed_connections()
         else:
@@ -1460,7 +1469,8 @@ class ContainmentQuery(TwoNetworkConfigsQuery):
 
         conns1_not_in_conns2 = conns1 - conns2
         different_conns_list = []
-        self._append_different_conns_to_list(conns1_not_in_conns2, different_conns_list)
+        self._append_different_conns_to_list(conns1_not_in_conns2, different_conns_list,
+                                             remove_livesim_diff=remove_livesim_diff)
         return self._query_answer_with_relevant_explanation(sorted(different_conns_list), cmd_line_flag)
 
     def _query_answer_with_relevant_explanation(self, explanation_list, cmd_line_flag):
@@ -1542,7 +1552,8 @@ class PermitsQuery(TwoNetworkConfigsQuery):
 
         config1_without_gateway = self.clone_without_gateway_layers(self.config1)
         query_answer = ContainmentQuery(config1_without_gateway, self.config2,
-                                        self.output_config).exec(cmd_line_flag=cmd_line_flag, only_captured=True)
+                                        self.output_config).exec(cmd_line_flag=cmd_line_flag, only_captured=True,
+                                                                 remove_livesim_diff=True)
         if not cmd_line_flag:
             query_answer.numerical_result = 1 if query_answer.output_explanation else 0
         if query_answer.bool_result:
@@ -1579,7 +1590,7 @@ class InterferesQuery(TwoNetworkConfigsQuery):
 
         conns1_not_in_conns2 = conns1 - conns2
         extended_conns_list = []
-        self._append_different_conns_to_list(conns1_not_in_conns2, extended_conns_list, True)
+        self._append_different_conns_to_list(conns1_not_in_conns2, extended_conns_list, props_based_on_config1=True)
         return self._query_answer_with_relevant_explanation(sorted(extended_conns_list), cmd_line_flag)
 
     def _query_answer_with_relevant_explanation(self, explanation_list, cmd_line_flag):
@@ -1634,7 +1645,7 @@ class IntersectsQuery(TwoNetworkConfigsQuery):
         conns_in_both = conns1 & conns2
         if conns_in_both:
             intersect_connections_list = []
-            self._append_different_conns_to_list(conns_in_both, intersect_connections_list)
+            self._append_different_conns_to_list(conns_in_both, intersect_connections_list, remove_livesim_diff=True)
             return self._query_answer_with_relevant_explanation(sorted(intersect_connections_list))
 
         return QueryAnswer(False, f'The connections allowed by {self.name1}'

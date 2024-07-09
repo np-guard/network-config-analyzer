@@ -13,6 +13,7 @@ from .PoliciesFinder import PoliciesFinder
 from .TopologyObjectsFinder import PodsFinder, NamespacesFinder, ServicesFinder
 from .PeerContainer import PeerContainer
 from nca.Utils.ExplTracker import ExplTracker
+from nca.CoreDS.Peer import PeerSet
 
 
 class ResourceType(Enum):
@@ -31,6 +32,12 @@ class LiveSimPaths:
     DnsCfgPath = 'LiveSim/dns/'  # kube-dns pod
     IngressControllerCfgPath = 'LiveSim/ingress_controller/'  # ingress controller pod
     IstioGwCfgPath = 'LiveSim/istio_gateway/'  # istio gateway pod
+
+    @staticmethod
+    def is_livesim_resource(path):
+        return LiveSimPaths.DnsCfgPath in path or \
+               LiveSimPaths.IngressControllerCfgPath in path or \
+               LiveSimPaths.IstioGwCfgPath in path
 
 
 class ResourcesHandler:
@@ -199,7 +206,7 @@ class ResourcesHandler:
 
         # build and return the networkConfig
         return NetworkConfig(name=config_name, peer_container=peer_container,
-                             policies_container=resources_parser.policies_finder.policies_container,
+                             policies_finder=resources_parser.policies_finder,
                              debug=debug)
 
     def _set_config_peer_container(self, ns_list, pod_list, resource_list, config_name, save_flag, resources_parser):
@@ -396,6 +403,7 @@ class ResourcesParser:
             elif resource_item == 'istio':
                 self._handle_istio_inputs(resource_flags)
             else:
+                is_livesim = LiveSimPaths.is_livesim_resource(resource_item)
                 fast_load = (ResourceType.Policies not in resource_flags) and not ExplTracker().is_active()
                 resource_scanner = TreeScannerFactory.get_scanner(resource_item, fast_load=fast_load)
                 if resource_scanner is None:
@@ -409,7 +417,13 @@ class ResourcesParser:
                             self.ns_finder.parse_yaml_code_for_ns(res_code)
                         if ResourceType.Pods in resource_flags:
                             self.pods_finder.namespaces_finder = self.ns_finder
+                            curr_pods = PeerSet()
+                            if is_livesim:
+                                # keep curent pods in order to find livesim-added pods
+                                curr_pods = self.pods_finder.peer_set.copy()
                             self.pods_finder.add_eps_from_yaml(res_code)
+                            if is_livesim:
+                                self.pods_finder.livesim_peer_set.update(self.pods_finder.peer_set.difference(curr_pods))
                             self.services_finder.namespaces_finder = self.ns_finder
                             self.services_finder.parse_yaml_code_for_service(res_code, yaml_file)
                         if ResourceType.Policies in resource_flags:
@@ -483,4 +497,4 @@ class ResourcesParser:
                                 f'{len(self.ns_finder.namespaces)} namespaces')
 
         return PeerContainer(self.pods_finder.peer_set, self.ns_finder.namespaces, self.services_finder.services_list,
-                             self.pods_finder.representative_peers)
+                             self.pods_finder.representative_peers, self.pods_finder.livesim_peer_set)

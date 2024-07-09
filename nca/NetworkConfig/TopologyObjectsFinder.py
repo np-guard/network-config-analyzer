@@ -28,6 +28,7 @@ class PodsFinder:
     def __init__(self):
         self.namespaces_finder = None
         self.peer_set = PeerSet()
+        self.livesim_peer_set = PeerSet()
         self.representative_peers = {}
 
     def load_peer_from_calico_resource(self):

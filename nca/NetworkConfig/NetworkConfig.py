@@ -3,42 +3,13 @@
 # SPDX-License-Identifier: Apache2.0
 #
 
-from dataclasses import dataclass, field, replace
+from dataclasses import replace
 from nca.CoreDS import Peer
 from nca.CoreDS.ConnectivityProperties import ConnectivityProperties
 from nca.Resources.PolicyResources.NetworkPolicy import NetworkPolicy, PolicyConnections, PolicyConnectionsFilter
-from .NetworkLayer import NetworkLayersContainer, NetworkLayerName
+from .NetworkLayer import NetworkLayerName
+from .PoliciesFinder import PoliciesFinder
 from nca.Utils.ExplTracker import ExplTracker
-
-
-@dataclass
-class PoliciesContainer:
-    """
-    A class for holding policies map and layers map containing sorted policies per layer
-    policies: map from tuples (policy name, policy type) to policy objects
-    layers: map from layer name to layer object
-    """
-    policies: dict = field(default_factory=dict)
-    layers: NetworkLayersContainer = field(default_factory=NetworkLayersContainer)
-
-    def append_policy(self, policy):
-        """
-        Add a policy to the container
-        :param NetworkPolicy policy: the policy to add
-        """
-        # validate input policy
-        if not policy:
-            return
-        policy_type = policy.policy_kind
-        if policy_type == NetworkPolicy.PolicyType.Unknown:
-            raise Exception('Unknown policy type')
-        if (policy.full_name(), policy_type) in self.policies:
-            raise Exception(f'A policy named {policy.full_name()} of type {policy_type} already exists')
-
-        # update policies map
-        self.policies[(policy.full_name(), policy_type)] = policy
-        # add policy to the corresponding layer's list (sorted) of policies
-        self.layers.add_policy(policy, NetworkLayerName.policy_type_to_layer(policy_type))
 
 
 class NetworkConfig:
@@ -48,14 +19,15 @@ class NetworkConfig:
     The class also contains the core algorithm of computing allowed connections between two endpoints.
     """
 
-    def __init__(self, name, peer_container, policies_container, debug=False):
+    def __init__(self, name, peer_container, policies_finder, debug=False):
         """
         :param str name: A name for this config
         :param PeerContainer peer_container: The set of endpoints and their namespaces
         """
         self.name = name
         self.peer_container = peer_container
-        self.policies_container = policies_container
+        self.policies_finder = policies_finder  # keep for Permits/Forbids query, to rebuild by base config
+        self.policies_container = policies_finder.policies_container
         self.debug = debug
         self.allowed_labels = None
 
@@ -104,8 +76,7 @@ class NetworkConfig:
         :return: A clone of the config without any policies
         :rtype: NetworkConfig
         """
-        policies_container = PoliciesContainer()
-        res = NetworkConfig(name, peer_container=self.peer_container, policies_container=policies_container,
+        res = NetworkConfig(name, peer_container=self.peer_container, policies_finder=PoliciesFinder(),
                             debug=self.debug)
         return res
 
@@ -283,3 +254,16 @@ class NetworkConfig:
         dns_to_any_conns = ConnectivityProperties.make_conn_props_from_dict({"src_peers": all_dns_entries})
         res -= dns_to_any_conns
         return res
+
+    def rebuild_by_base_config_resources(self, base_config):
+        """
+        Rebuild the current config policies, based on peer_set from the given config,
+        and return the result in a new config.
+        :param NetworkConfig base_config: The given config, whose peer_set should be used for the resulting config.
+        :return NetworkConfig: the resulting config
+        """
+        result = base_config.clone_without_policies(self.name)
+        result.policies_finder = \
+            self.policies_finder.rebuild_policies_by_peer_container(result.peer_container)
+        result.policies_container = result.policies_finder.policies_container
+        return result
