@@ -42,7 +42,8 @@ class IstioVirtualServiceYamlParser(GenericGatewayYamlParser):
         self.set_file_name(vs_file_name)  # for error/warning messages
         vs_name, vs_ns = self.parse_generic_yaml_objects_fields(vs_resource, ['VirtualService'],
                                                                 ['networking.istio.io/v1alpha3',
-                                                                 'networking.istio.io/v1beta1'], 'istio', True)
+                                                                 'networking.istio.io/v1beta1',
+                                                                 'networking.istio.io/v1'], 'istio', True)
         if vs_name is None:
             return None  # Not an Istio VirtualService object
         vs_namespace = self.peer_container.get_namespace(vs_ns)

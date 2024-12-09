@@ -66,7 +66,8 @@ class IstioServiceEntryYamlParser(GenericYamlParser):
         """
         se_name, se_ns = self.parse_generic_yaml_objects_fields(service_entry_obj, ['ServiceEntry'],
                                                                 ['networking.istio.io/v1beta1',
-                                                                 'networking.istio.io/v1alpha3'], 'istio', True)
+                                                                 'networking.istio.io/v1alpha3',
+                                                                 'networking.istio.io/v1'], 'istio', True)
         if se_name is None:
             return None   # not a ServiceEntry object, nothing to build
 
