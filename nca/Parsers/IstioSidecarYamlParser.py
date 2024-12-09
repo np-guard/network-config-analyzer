@@ -207,7 +207,8 @@ class IstioSidecarYamlParser(IstioGenericYamlParser):
         """
         policy_name, policy_ns = self.parse_generic_yaml_objects_fields(self.policy, ['Sidecar'],
                                                                         ['networking.istio.io/v1alpha3',
-                                                                         'networking.istio.io/v1beta1'], 'istio', True)
+                                                                         'networking.istio.io/v1beta1',
+                                                                         'networking.istio.io/v1'], 'istio', True)
         if policy_name is None:
             return None  # not an Istio Sidecar
         warn_if_missing = policy_ns != istio_root_namespace
