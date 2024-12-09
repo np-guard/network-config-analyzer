@@ -154,6 +154,8 @@ class PoliciesFinder:
                                        policy_name
                                        )
         if istio_gtw_parser or istio_vs_parser:
+            if not istio_vs_parser:
+                istio_vs_parser = IstioVirtualServiceYamlParser(self.peer_container)
             istio_gtw_policy_gen = IstioGatewayPolicyGenerator(istio_gtw_parser, istio_vs_parser)
             istio_gateway_policies = istio_gtw_policy_gen.create_istio_gateway_policies()
             for istio_traffic_policy in istio_gateway_policies:
