@@ -1,2 +1,3 @@
 include nca/VERSION.txt
+include nca/FWRules/interactiveJsCode.js
 graft nca/NetworkConfig/LiveSim
