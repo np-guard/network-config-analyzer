@@ -58,7 +58,8 @@ class IstioGatewayYamlParser(GenericGatewayYamlParser):
         self.set_file_name(gateway_file_name)  # for error/warning messages
         gtw_name, gtw_ns = self.parse_generic_yaml_objects_fields(gateway_resource, ['Gateway'],
                                                                   ['networking.istio.io/v1alpha3',
-                                                                   'networking.istio.io/v1beta1'], 'istio', True)
+                                                                   'networking.istio.io/v1beta1',
+                                                                   'networking.istio.io/v1'], 'istio', True)
         if gtw_name is None:
             return None  # not an Istio Gateway
         gtw_namespace = self.peer_container.get_namespace(gtw_ns)
