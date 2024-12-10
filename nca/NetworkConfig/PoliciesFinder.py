@@ -5,6 +5,7 @@
 
 from dataclasses import dataclass, field
 from collections import deque
+from sys import stderr
 import yaml
 from nca.Utils.CmdlineRunner import CmdlineRunner
 from nca.Resources.PolicyResources.NetworkPolicy import NetworkPolicy
@@ -17,6 +18,7 @@ from nca.Parsers.IstioGatewayYamlParser import IstioGatewayYamlParser
 from nca.Parsers.IstioVirtualServiceYamlParser import IstioVirtualServiceYamlParser
 from nca.Parsers.IstioGatewayPolicyGenerator import IstioGatewayPolicyGenerator
 from nca.Utils.ExplTracker import ExplTracker
+from nca.Utils.NcaLogger import NcaLogger
 from .NetworkLayer import NetworkLayersContainer, NetworkLayerName
 
 
@@ -42,7 +44,9 @@ class PoliciesContainer:
         if policy_type == NetworkPolicy.PolicyType.Unknown:
             raise Exception('Unknown policy type')
         if (policy.full_name(), policy_type) in self.policies:
-            raise Exception(f'A policy named {policy.full_name()} of type {policy_type} already exists')
+            warning = f'Warning: policy {policy.full_name()} of type {policy_type} already exists. Ignoring new policy.'
+            NcaLogger().log_message(warning, file=stderr)
+            return
 
         # update policies map
         self.policies[(policy.full_name(), policy_type)] = policy
