@@ -44,7 +44,7 @@ class PoliciesContainer:
         if policy_type == NetworkPolicy.PolicyType.Unknown:
             raise Exception('Unknown policy type')
         if (policy.full_name(), policy_type) in self.policies:
-            warning = f'Warning: A policy named {policy.full_name()} of type {policy_type} already exists. Ignoring new policy.'
+            warning = f'Warning: policy {policy.full_name()} of type {policy_type} already exists. Ignoring new policy.'
             NcaLogger().log_message(warning, file=stderr)
             return
 
