@@ -8,7 +8,7 @@ from enum import Enum
 from nca.CoreDS.DimensionsManager import DimensionsManager
 from nca.CoreDS.Peer import IpBlock
 from nca.Utils.NcaLogger import NcaLogger
-from nca.FileScanners.GenericTreeScanner import ObjectWithLocation
+from nca.FileScanners.GenericTreeScanner import ObjectWithLocation, YamlFile
 
 
 class GenericYamlParser:
@@ -61,7 +61,8 @@ class GenericYamlParser:
         """
         print_msg = 'Warning: ' + msg
         if isinstance(obj, ObjectWithLocation):
-            print_msg = f'{self.yaml_file_name}:{obj.line_number}:{obj.column_number}: {print_msg}'
+            file_path = self.yaml_file_name.path if isinstance(self.yaml_file_name, YamlFile) else self.yaml_file_name
+            print_msg = f'{file_path}:{obj.line_number}:{obj.column_number}: {print_msg}'
 
         NcaLogger().log_message(print_msg, file=stderr)
         self.warning_msgs.append(msg)
