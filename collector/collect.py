@@ -17,4 +17,5 @@ for resource in resources:
     log = open(ctx_cluster + '_' + resource + '.yaml', 'a')
     cmdline_process = subprocess.Popen(cmdline_list, stdout=log, stderr=subprocess.PIPE)
     out, err = cmdline_process.communicate()
-    print(err)
+    if len(err) > 0:
+        print(err)
