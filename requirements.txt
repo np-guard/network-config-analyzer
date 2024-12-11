@@ -1,6 +1,6 @@
 ghapi==1.0.6
 PyYAML==6.0.2
 greenery==4.0.0
-networkx==3.2.1
+networkx==3.4.2
 beautifulsoup4==4.12.3
 lxml==5.3.0
