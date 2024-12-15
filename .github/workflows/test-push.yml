@@ -140,7 +140,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - uses: ./.github/actions/setup-nca-env
-      - uses: helm/kind-action@d8ccf8fb623ce1bb360ae2f45f323d9d5c5e9f00
+      - uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde
       - run: |
           curl -L https://istio.io/downloadIstio | sh -
           cd istio-1.*
