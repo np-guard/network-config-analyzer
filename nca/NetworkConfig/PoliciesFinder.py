@@ -7,6 +7,10 @@ from dataclasses import dataclass, field
 from collections import deque
 from sys import stderr
 import yaml
+
+# Use CSafeLoader if available (libyaml compiled), fall back to SafeLoader
+SafeYamlLoader = getattr(yaml, 'CSafeLoader', yaml.SafeLoader)
+
 from nca.Utils.CmdlineRunner import CmdlineRunner
 from nca.Resources.PolicyResources.NetworkPolicy import NetworkPolicy
 from nca.Parsers.K8sPolicyYamlParser import K8sPolicyYamlParser
@@ -191,7 +195,7 @@ class PoliciesFinder:
             self.parse_yaml_code_for_policy(policy, file_name)
 
     def _add_policies(self, doc, file_name):
-        code = yaml.load_all(doc, Loader=yaml.CSafeLoader)
+        code = yaml.load_all(doc, Loader=SafeYamlLoader)
         for policy_list in code:
             if isinstance(policy_list, dict):
                 self._add_policies_to_parse_queue(policy_list.get('items', []), file_name)

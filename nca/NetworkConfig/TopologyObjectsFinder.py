@@ -5,6 +5,10 @@
 
 from sys import stderr
 import yaml
+
+# Use CSafeLoader if available (libyaml compiled), fall back to SafeLoader
+SafeYamlLoader = getattr(yaml, 'CSafeLoader', yaml.SafeLoader)
+
 from nca.Utils.CmdlineRunner import CmdlineRunner
 from nca.CoreDS.Peer import PeerSet, Pod, IpBlock, HostEP, BasePeerSet
 from nca.Resources.OtherResources.K8sNamespace import K8sNamespace
@@ -34,15 +38,15 @@ class PodsFinder:
     def load_peer_from_calico_resource(self):
         for peer_type in ['wep', 'hep', 'networkset', 'globalnetworkset']:
             peer_code = yaml.load(CmdlineRunner.get_calico_resources(peer_type),
-                                  Loader=yaml.CSafeLoader)
+                                  Loader=SafeYamlLoader)
             self.add_eps_from_yaml(peer_code)
 
     def load_peer_from_istio_resource(self):
-        peer_code = yaml.load(CmdlineRunner.get_k8s_resources(['serviceentry']), Loader=yaml.CSafeLoader)
+        peer_code = yaml.load(CmdlineRunner.get_k8s_resources(['serviceentry']), Loader=SafeYamlLoader)
         self.add_eps_from_yaml(peer_code)
 
     def load_peer_from_k8s_live_cluster(self):
-        peer_code = yaml.load(CmdlineRunner.get_k8s_resources(['pod']), Loader=yaml.CSafeLoader)
+        peer_code = yaml.load(CmdlineRunner.get_k8s_resources(['pod']), Loader=SafeYamlLoader)
         self.add_eps_from_yaml(peer_code)
 
     def add_eps_from_yaml(self, yaml_obj, kind_override=None):
@@ -297,7 +301,7 @@ class NamespacesFinder:
 
     def load_ns_from_live_cluster(self):
         yaml_file = CmdlineRunner.get_k8s_resources(['namespace'])
-        ns_code = yaml.load(yaml_file, Loader=yaml.CSafeLoader)
+        ns_code = yaml.load(yaml_file, Loader=SafeYamlLoader)
         self.set_namespaces(ns_code)
 
     def set_namespaces(self, ns_list):
@@ -361,7 +365,7 @@ class ServicesFinder:
         :return: The list of parsed services in K8sService format
         """
         yaml_file = CmdlineRunner.get_k8s_resources(['service'])
-        srv_resources = yaml.load(yaml_file, Loader=yaml.CSafeLoader)
+        srv_resources = yaml.load(yaml_file, Loader=SafeYamlLoader)
         if not isinstance(srv_resources, dict):
             return
         parser = K8sServiceYamlParser('k8s')
