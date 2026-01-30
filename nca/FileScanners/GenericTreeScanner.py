@@ -9,6 +9,9 @@ from sys import stderr
 from dataclasses import dataclass
 import yaml
 
+# Use CSafeLoader if available (libyaml compiled), fall back to SafeLoader
+SafeYamlLoader = getattr(yaml, 'CSafeLoader', yaml.SafeLoader)
+
 
 @dataclass
 class YamlFile:
@@ -114,9 +117,9 @@ class GenericTreeScanner(abc.ABC):
         """
         try:
             if self.fast_load:
-                documents = leave_documents_as_is(yaml.load_all(stream, Loader=yaml.CSafeLoader))
+                documents = leave_documents_as_is(yaml.load_all(stream, Loader=SafeYamlLoader))
             else:
-                documents = convert_documents(yaml.compose_all(stream, Loader=yaml.CSafeLoader))
+                documents = convert_documents(yaml.compose_all(stream, Loader=SafeYamlLoader))
             yield YamlFile(documents, path)
         except yaml.MarkedYAMLError as parse_error:
             print(f'{parse_error.problem_mark.name}:{parse_error.problem_mark.line+1}:{parse_error.problem_mark.column+1}:',
